@@ -1,0 +1,20 @@
+---
+users:
+  - name: test
+email_domain: example.com
+
+mail_server_group: postfix
+mail_server_user: postfix
+
+smtp_sasl_auth_directory: /var/spool/postfix
+smtp_sasl_auth_path: private/auth
+
+opendkim_private_key: |
+    TODO
+opendkim_public-key: |
+    TODO
+
+email_cert_public: |
+    TODO
+email_cert_private: |
+    TODO

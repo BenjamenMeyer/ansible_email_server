@@ -1,0 +1,7 @@
+---
+- import_tasks: common.yml
+- import_tasks: database.yml
+- import_tasks: postfix.yml
+- import_tasks: dovecot.yml
+- import_tasks: opendkim.yml
+- import_tasks: firewall.yml

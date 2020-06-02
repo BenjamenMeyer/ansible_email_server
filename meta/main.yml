@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Benjamen R. Meyer
+  description: Email Server Management
+  company: Personal
+
+  license: Apache
+
+  min_ansible_version: 2.6
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - 18.04
+
+  galaxy_tags: []
+
+dependencies: []

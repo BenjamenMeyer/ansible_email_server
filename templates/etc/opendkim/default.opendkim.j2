@@ -1,0 +1,8 @@
+#DAEMON_OPTS=""
+RUNDIR=/var/run/opendkim
+
+SOCKET=local:/var/run/opendkim/opendkim.sock
+USER={{ dkim_user }}
+GROUP={{ dkim_group }}
+PIDFILE=$RUNDIR/$NAME.pid
+EXTRAAFTER=

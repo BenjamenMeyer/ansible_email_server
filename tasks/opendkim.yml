@@ -1,0 +1,81 @@
+---
+- name: Install OpenDKIM
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - opendkim
+      - opendkim-tools
+
+- set_fact:
+    opendkim_config_location: "/etc/opendkim"
+    opendkim_key_file: "/etc/dkimkeys/{{ email_domain }}.pem"
+
+- name: Create OpenDKIM Config Directory
+  file:
+    path: "{{ opendkim_config_location }}"
+    state: directory
+    mode: 0600
+    owner: "{{ dkim_user }}"
+    group: "{{ dkim_group }}"
+
+- name: Store OpenDKIM Private Key
+  copy:
+    content: "{{ opendkim_private_key }}"
+    dest: "{{ opendkim_key_file }}"
+    mode: 0600
+    owner: "{{ dkim_user }}"
+    group: "{{ dkim_group }}"
+
+- name: Configure DKIM
+  template:
+    src: "{{ role_path }}/templates/etc/opendkim/{{ item.source }}"
+    dest: "{{ item.destination }}"
+    mode: 0644
+    owner: "{{ dkim_user }}"
+    group: "{{ dkim_group }}"
+  with_items:
+    - { source: "opendkim.conf.j2", destination: "/etc/opendkim.conf" }
+    - { source: "default.opendkim.j2", destination: "/etc/default/opendkim" }
+
+- name: Set OpenDKIM KeyTable 
+  copy:
+    content: "mail._domainkey.{{ email_domain }} {{ email_domain }}:mail:{{ opendkim_key_file }}"
+    dest: "{{ opendkim_config_location }}/KeyTable"
+
+- name: Set OpenDKIM SigningTable
+  copy:
+    content: "*@{{ email_domain }} mail._domainkey.{{ email_domain }}"
+    dest: "{{ opendkim_config_location }}/SigningTable"
+    mode: 0644
+    owner: "{{ mail_server_user }}"
+    group: "{{ mail_server_group }}"
+
+- name: Set OpenDKIM Trusted Hosts
+  copy:
+    content: |
+        127.0.0.1
+        ::1
+        localhost
+        *.{{ email_domain }}
+    dest: "{{ opendkim_config_location }}/TrustedHosts"
+    mode: 0644
+    owner: "{{ mail_server_user }}"
+    group: "{{ mail_server_group }}"
+
+- name: Rebuild SystemD Related Configuration files
+  command: /lib/opendkim/opendkim.service.generate
+
+- name: Restart OpenDKIM
+  service:
+    name: opendkim
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+
+- name: Verify OpenDKIM
+  service:
+    name: opendkim
+    enabled: yes
+    state: started

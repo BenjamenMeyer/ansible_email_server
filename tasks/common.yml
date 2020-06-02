@@ -1,0 +1,5 @@
+---
+- name: Set the system mailname
+  copy:
+    content: "{{ email_domain }}"
+    dest: /etc/mailname

@@ -1,0 +1,48 @@
+---
+- name: Install Dovecot
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - dovecot-core
+      - dovecot-pgsql
+      - dovecot-imapd
+      - dovecot-pop3d
+      - dovecot-antispam
+
+- name: Store the SSL Keys
+  copy:
+    content: "{{ item.value }}"
+    dest: "{{ item.filename }}"
+    mode: 0644
+    owner: "{{ dovecot_user }}"
+    group: "{{ dovecot_group }}"
+  with_items:
+    - { filename: "/etc/dovecot/dovecot.pem", value: "{{ email_cert_public }}" }
+    - { filename: "/etc/dovecot/private/dovecot.pem", value: "{{ email_cert_private }}" }
+
+- name: Configure Dovecot
+  template:
+    src: "{{ role_path }}/templates/etc/dovecot/{{ item }}.j2"
+    dest: "/etc/dovecot/conf.d/{{ item }}"
+    mode: 0644
+    owner: "{{ dovecot_user }}"
+    group: "{{ dovecot_group }}"
+  with_items:
+    - "10-mail.conf"
+    - "10-ssl.conf"
+    - "15-lda.conf"
+    - "10-master.conf"
+
+- name: Restart dovecot
+  service:
+    name: dovecot
+    enabled: yes
+    state: restarted
+
+- name: Verify dovecot
+  service:
+    name: dovecot
+    enabled: yes
+    state: started

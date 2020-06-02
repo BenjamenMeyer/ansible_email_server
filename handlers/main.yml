@@ -1,0 +1,18 @@
+---
+- name: Restart dovecot
+  service:
+    name: dovecot
+    enabled: yes
+    state: restarted
+
+- name: Restart Postfix
+  service:
+    name: postfix
+    enabled: yes
+    state: restarted
+
+- name: Restart OpenDKIM
+  service:
+    name: opendkim
+    enabled: yes
+    state: restarted

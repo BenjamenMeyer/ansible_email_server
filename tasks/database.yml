@@ -1,0 +1,16 @@
+---
+- name: Install Postgres
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - postgresql-all
+    - postgresql-client
+    - postgresql-doc
+
+- name: Verify Postgres
+  service:
+     name: postgresql
+     enabled: yes
+     state: started

@@ -1,0 +1,14 @@
+---
+- name: Allow traffic to Postfix
+  ufw:
+    rule: allow
+    name: "Postfix Submission"
+
+- name: Allow traffic to Dovecot
+  ufw:
+    rule: allow
+    name: "{{ item }}"
+  with_items:
+    - "Dovecot Secure IMAP"
+    - "Dovecot Secure POP3"
+
