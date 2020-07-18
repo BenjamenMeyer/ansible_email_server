@@ -1,7 +1,7 @@
 galaxy_info:
   author: Benjamen R. Meyer
   description: Email Server Management
-  company: Personal
+  company: Clockwerks Software
 
   license: Apache
 
@@ -12,6 +12,10 @@ galaxy_info:
     versions:
     - 18.04
 
-  galaxy_tags: []
+  galaxy_tags:
+    - clockwerks.software
+    - postfix
+    - dovecot
+    - postgressql
 
 dependencies: []
